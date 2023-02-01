@@ -1,4 +1,4 @@
---The following is a sample script for creating a boss fight. The boss will use three abilities, and has various yell functions depending on its combat state.
+--The following is a sample script for creating a boss fight. The boss will use three abilities and has various yell functions depending on its combat state.
 
 
 local npcId = 400012 --ID from creature_template
