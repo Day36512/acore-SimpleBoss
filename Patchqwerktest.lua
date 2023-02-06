@@ -1,13 +1,52 @@
---The following is a sample script for creating a boss fight. The boss will use three abilities and has various yell functions depending on its combat state.
+local Patchqwerk = {} 
 
-
-local npcId = 400012 --ID from creature_template
-
-local function OnSpawn(event, creature) --Creature yells upon spawning. I've also set this up to send a world message as this is tied to a world event I created. You can delete the SendWorldMessage line.
-	creature:SendUnitYell("Patchqwerk make Lich King proud! You die now!",0)  --0 indicates language. In this case, universal.
-	SendWorldMessage("The Lich King has sent forth his forces to attack the people of Azeroth. Quickly heroes, defend your cities!")
+function Patchqwerk.OnSpawn(event, creature)
+creature:SendUnitYell("Patchqwerk make Lich King proud! You die now!",0)
+creature:SetMaxHealth(46664000)
 end
 
+function Patchqwerk.PoisonBoltVolley(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 40095, true)
+end
+
+function Patchqwerk.CastHatefulStrike(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 28308, true)
+end
+
+function Patchqwerk.CastGore(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 48130, true)
+end
+
+function Patchqwerk.OnEnterCombat(event, creature, target)
+local yellOptions = { "Patchqwerk huuuuungry!", "Time for a snack!", "You're mine now!", "You look delicious. Patchqwerk eat you now!", "I not eat in days, time to feast!", "Me smash and eat you now!", "Me so hungry, me eat anything... even you!" }
+local randomIndex = math.random(1, 7)
+local selectedYell = yellOptions[randomIndex] --script pulls one dialogue option from above upon entering combat.
+creature:SendUnitYell(selectedYell, 0)
+creature:RegisterEvent(Patchqwerk.PoisonBoltVolley, 7000, 0)
+creature:RegisterEvent(Patchqwerk.CastHatefulStrike, 15000, 0)
+creature:RegisterEvent(Patchqwerk.CastGore, 20000, 0)
+end
+
+function Patchqwerk.OnLeaveCombat(event, creature)
+local yellOptions = { "You not so tasty afterall...", "I'll be back for seconds!", "No more play? Too bad...", "Maybe next time you'll taste better!","Me still hungry, come back later!","You not enough food, me go find more!" }
+local randomIndex = math.random(1, 6)
+local selectedYell = yellOptions[randomIndex]
+creature:SendUnitYell(selectedYell, 0)
+creature:RemoveEvents()
+end
+
+function Patchqwerk.OnDied(event, creature, killer)
+creature:SendUnitYell("Patchqwerk forget to chew...", 0)
+if(killer:GetObjectType() == "Player") then
+killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
+end
+creature:RemoveEvents()
+end
+
+RegisterCreatureEvent(400012, 1, Patchqwerk.OnEnterCombat)
+RegisterCreatureEvent(400012, 2, Patchqwerk.OnLeaveCombat)
+RegisterCreatureEvent(400012, 4, Patchqwerk.OnDied)
+RegisterCreatureEvent(400012, 5, Patchqwerk.OnSpawn)
 local function CastTrample(eventId, delay, calls, creature) --CastTrample, CastHatefulStrike, and CastGore are functions that cast spells on the creature's target (obtained through creature:GetVictim()). The spells cast are specified by their spell IDs (5568, 28308, and 48130 respectively).
     creature:CastSpell(creature:GetVictim(), 5568, true)
 end
@@ -42,7 +81,55 @@ local function OnDied(event, creature, killer) --OnDied is a function that is tr
     creature:SendUnitYell("Patchqwerk forget to chew...", 0)
 	if(killer:GetObjectType() == "Player") then
         killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
-    end
+    endlocal Patchqwerk = {} 
+
+function Patchqwerk.OnSpawn(event, creature)
+creature:SendUnitYell("Patchqwerk make Lich King proud! You die now!",0)
+creature:SetMaxHealth(46664000)
+end
+
+function Patchqwerk.PoisonBoltVolley(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 40095, true)
+end
+
+function Patchqwerk.CastHatefulStrike(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 28308, true)
+end
+
+function Patchqwerk.CastGore(eventId, delay, calls, creature)
+creature:CastSpell(creature:GetVictim(), 48130, true)
+end
+
+function Patchqwerk.OnEnterCombat(event, creature, target)
+local yellOptions = { "Patchqwerk huuuuungry!", "Time for a snack!", "You're mine now!", "You look delicious. Patchqwerk eat you now!", "I not eat in days, time to feast!", "Me smash and eat you now!", "Me so hungry, me eat anything... even you!" }
+local randomIndex = math.random(1, 7)
+local selectedYell = yellOptions[randomIndex] --script pulls one dialogue option from above upon entering combat.
+creature:SendUnitYell(selectedYell, 0)
+creature:RegisterEvent(Patchqwerk.PoisonBoltVolley, 7000, 0)
+creature:RegisterEvent(Patchqwerk.CastHatefulStrike, 15000, 0)
+creature:RegisterEvent(Patchqwerk.CastGore, 20000, 0)
+end
+
+function Patchqwerk.OnLeaveCombat(event, creature)
+local yellOptions = { "You not so tasty afterall...", "I'll be back for seconds!", "No more play? Too bad...", "Maybe next time you'll taste better!","Me still hungry, come back later!","You not enough food, me go find more!" }
+local randomIndex = math.random(1, 6)
+local selectedYell = yellOptions[randomIndex]
+creature:SendUnitYell(selectedYell, 0)
+creature:RemoveEvents()
+end
+
+function Patchqwerk.OnDied(event, creature, killer)
+creature:SendUnitYell("Patchqwerk forget to chew...", 0)
+if(killer:GetObjectType() == "Player") then
+killer:SendBroadcastMessage("You killed " ..creature:GetName().."!")
+end
+creature:RemoveEvents()
+end
+
+RegisterCreatureEvent(400012, 1, Patchqwerk.OnEnterCombat)
+RegisterCreatureEvent(400012, 2, Patchqwerk.OnLeaveCombat)
+RegisterCreatureEvent(400012, 4, Patchqwerk.OnDied)
+RegisterCreatureEvent(400012, 5, Patchqwerk.OnSpawn)
     creature:RemoveEvents()
 end
 
